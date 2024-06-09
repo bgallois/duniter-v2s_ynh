@@ -1,0 +1,57 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "duniter"
+name = "duniter-v2s"
+description.en = "Crypto-currency software (based on Substrate framework) to operate Ğ1 libre currency"
+description.fr = "Logiciel de crypto-monnaie (basé sur le framework Substrate) pour utiliser la monnaie libre Ğ1."
+
+version = "1.0~ynh1"
+
+maintainers = ["Axiom-Team"]
+
+[upstream]
+license = "	AGPL-3.0"
+website = "https://duniter.org"
+code = "https://git.duniter.org/nodes/rust/duniter-v2s"
+
+[integration]
+yunohost = ">= 11.2"
+architectures = "all"
+multi_instance = false
+
+ldap = false
+sso = false
+
+disk = "1000M"
+ram.build = "1000M"
+ram.runtime = "500M"
+
+[install]
+    [install.smith]
+    help.en = "Type of node?"
+    help.fr = "Type de noeud ?"
+    type = "string"
+    choice.mirror = "Mirror"
+    choice.smith = "Smith"
+
+[resources]
+    [resources.sources]
+
+    [resources.sources.main]
+    url = "https://git.duniter.org/nodes/rust/duniter-v2s/-/archive/fix-200/duniter-v2s-fix-200.tar.gz" #TODO for dev
+    sha256 = "7fe17ed9e38f7b55f8503e3d45328708da0c7a31ad30925a4f4758688773af2a"
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.data_dir]
+
+    [resources.permissions]
+
+    [resources.ports]
+
+    [resources.apt]
+    packages = "build-essential, clang, git, cmake, protobuf-compiler, libssl-dev, curl, openssl, libudev-dev, curl, llvm"
