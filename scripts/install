@@ -67,6 +67,8 @@ cp -af "$install_dir/build/target/release/duniter" "/usr/bin/duniter"
 chown root:root "/usr/bin/duniter"
 chmod 755 "/usr/bin/duniter"
 mkdir "/etc/duniter/"
+sed -i "s/DUNITER_NODE_NAME.*/DUNITER_NODE_NAME=$node_name/g" "$install_dir/build/resources/debian/env_file"
+sed -i "s/DUNITER_LISTEN_ADDR.*/DUNITER_LISTEN_ADDR=${node_listen_addr//\//\\/}/g" "$install_dir/build/resources/debian/env_file"
 cp -af "$install_dir/build/resources/debian/env_file" "/etc/duniter/env_file"
 
 #=================================================
@@ -75,7 +77,7 @@ cp -af "$install_dir/build/resources/debian/env_file" "/etc/duniter/env_file"
 ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
 # Create a dedicated systemd config
-if [ $smith = "mirror" ]; then
+if [ $node_type = "mirror" ]; then
     ynh_add_systemd_config --service="duniter-mirror" --template="$install_dir/build/resources/debian/duniter-mirror.service"
 else
     ynh_add_systemd_config --service="duniter-smith" --template="$install_dir/build/resources/debian/duniter-smith.service"
@@ -98,7 +100,7 @@ ynh_secure_remove --file="$install_dir/.rustup"
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
-if [ $smith = "mirror" ]; then
+if [ $node_type = "mirror" ]; then
     ynh_systemd_action --service_name="duniter-mirror" --action="start" --line_match="Started" --log_path="systemd"
 else
     ynh_systemd_action --service_name="duniter-smith" --action="start" --line_match="Started" --log_path="systemd"

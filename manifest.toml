@@ -29,19 +29,32 @@ ram.build = "1000M"
 ram.runtime = "500M"
 
 [install]
-    [install.smith]
-    help.en = "Type of node?"
-    help.fr = "Type de noeud ?"
+
+    [install.node_name]
+    help.en = "Node name?"
+    help.fr = "Nom du nœud ?"
     type = "string"
-    choice.mirror = "Mirror"
-    choice.smith = "Smith"
+
+    [install.node_type]
+    help.en = "Type of node?"
+    help.fr = "Type de nœud ?"
+    type = "string"
+    default = "mirror"
+    choice.mirror = "mirror"
+    choice.smith = "smith"
+
+    [install.node_listen_addr]
+    help.en = "Address and port for node communication. If SMITH NODE: `/ip4/0.0.0.0/tcp/<port>` and `/ip6/[::]/tcp/<port>`. Otherwise: `/ip4/0.0.0.0/tcp/<port>/ws` and `/ip6/[::]/tcp/<port>/ws`."
+    help.fr = "Adresse et port pour la communication du nœud. Si SMITH : /ip4/0.0.0.0/tcp/<port> et /ip6/[::]/tcp/<port>. Sinon : /ip4/0.0.0.0/tcp/<port>/ws et /ip6/[::]/tcp/<port>/ws."
+    type = "string"
+    default = "/ip4/0.0.0.0/tcp/30333/ws"
 
 [resources]
     [resources.sources]
 
     [resources.sources.main]
     url = "https://git.duniter.org/nodes/rust/duniter-v2s/-/archive/fix-200/duniter-v2s-fix-200.tar.gz" #TODO for dev
-    sha256 = "7fe17ed9e38f7b55f8503e3d45328708da0c7a31ad30925a4f4758688773af2a"
+    sha256 = "b933b125c632dad670c4322edaf34c1638c5252333135ae2e828c4cd60ffdc02"
 
     [resources.system_user]
 
