@@ -30,10 +30,10 @@ fi
 #=================================================
 ynh_script_progression --message="Configuring system user..." --weight=1
 
-addgroup --system "duniter"
-adduser --system --home "/home/duniter" --disabled-password --ingroup "duniter" "duniter"
+getent group duniter >/dev/null 2>&1 || addgroup --system "duniter"
+getent passwd duniter >/dev/null 2>&1 || adduser --system --disabled-password --ingroup "duniter" "duniter"
 
-#FIXME adduser not creating home dir
+# Create duniter home dir
 if [ ! -d "/home/duniter/" ]; then
     mkdir /home/duniter
     chown -R duniter:duniter /home/duniter
@@ -73,7 +73,7 @@ chown -R "$app:$app" "$install_dir"
 #=================================================
 ynh_script_progression --message="Building app..." --weight=1
 
-# Compile
+# Compile duniter
 pushd "$install_dir/build"
     ynh_exec_warn_less ynh_exec_as "$app" bash -c "source $install_dir/.cargo/env; cargo build -Zgit=shallow-deps --release -p duniter"
 popd
@@ -83,6 +83,8 @@ cp -af "$install_dir/build/target/release/duniter" "/usr/bin/duniter"
 chown root:root "/usr/bin/duniter"
 chmod 755 "/usr/bin/duniter"
 mkdir "/etc/duniter/"
+
+# Update config file
 sed -i "s/DUNITER_NODE_NAME.*/DUNITER_NODE_NAME=$node_name/g" "$install_dir/build/resources/debian/env_file"
 sed -i "s/DUNITER_LISTEN_ADDR.*/DUNITER_LISTEN_ADDR=${node_listen_addr//\//\\/}/g" "$install_dir/build/resources/debian/env_file"
 cp -af "$install_dir/build/resources/debian/env_file" "/etc/duniter/env_file"

@@ -15,6 +15,15 @@ ynh_backup --src_path="${BASE_PATH}" --is_big
 
 ynh_backup --src_path="/etc/$app/"
 
+
+if [ $node_type = "mirror" ]; then
+    ynh_backup --src_path="/etc/systemd/system/duniter-mirror.service"
+else
+    ynh_backup --src_path="/etc/systemd/system/duniter-smith.service"
+    ynh_backup --src_path="/etc/systemd/system/distance-oracle.service"
+    ynh_backup --src_path="/etc/systemd/system/distance-oracle.timer"
+fi
+
 ynh_backup --src_path="/var/log/$app/"
 
 ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
