@@ -50,6 +50,8 @@ chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R "$app:$app" "$install_dir"
 
+ynh_add_nginx_config
+
 #=================================================
 # SPECIFIC SETUP
 #=================================================
@@ -63,9 +65,9 @@ pushd "$install_dir/build"
 popd
 
 # Install
-cp -af "$install_dir/build/target/release/duniter" "/usr/bin/duniter"
-chown root:root "/usr/bin/duniter"
-chmod 755 "/usr/bin/duniter"
+cp -af "$install_dir/build/target/release/duniter" "/usr/bin/duniter2"
+chown root:root "/usr/bin/duniter2"
+chmod 755 "/usr/bin/duniter2"
 mkdir "/etc/duniter/"
 
 # Update config file
@@ -89,7 +91,7 @@ fi
 
 # Generate the node keys
 export $(grep -v '^#' /etc/duniter/env_file | xargs -d '\n')
-su -c "duniter key generate-node-key --base-path ${BASE_PATH} --chain ${DUNITER_CHAIN_NAME}" duniter
+su -c "duniter2 key generate-node-key --base-path ${BASE_PATH} --chain ${DUNITER_CHAIN_NAME}" duniter
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate

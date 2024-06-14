@@ -10,6 +10,9 @@ source /usr/share/yunohost/helpers
 
 ynh_print_info --message="Declaring files to be backed up..."
 
+# Backup the nginx configuration
+ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+
 export $(grep -v '^#' /etc/duniter/env_file | xargs -d '\n')
 ynh_backup --src_path="${BASE_PATH}" --is_big
 

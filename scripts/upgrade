@@ -79,10 +79,12 @@ pushd "$install_dir/build"
 popd
 
 # Install
-cp -af "$install_dir/build/target/release/duniter" "/usr/bin/duniter"
-chown root:root "/usr/bin/duniter"
-chmod 755 "/usr/bin/duniter"
+cp -af "$install_dir/build/target/release/duniter" "/usr/bin/duniter2"
+chown root:root "/usr/bin/duniter2"
+chmod 755 "/usr/bin/duniter2"
 mkdir "/etc/duniter/"
+
+ynh_add_nginx_config
 
 # Update config file
 sed -i "s/DUNITER_NODE_NAME.*/DUNITER_NODE_NAME=$node_name/g" "$install_dir/build/resources/debian/env_file"

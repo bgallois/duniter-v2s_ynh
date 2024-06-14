@@ -28,6 +28,9 @@ ram.runtime = "500M"
 
 [install]
 
+    [install.domain]
+    type = "domain"
+
     [install.node_name]
     help.en = "Node name?"
     help.fr = "Nom du nœud ?"
@@ -52,7 +55,7 @@ ram.runtime = "500M"
 
     [resources.sources.main]
     url = "https://git.duniter.org/nodes/rust/duniter-v2s/-/archive/fix-200/duniter-v2s-fix-200.tar.gz" #TODO for dev
-    sha256 = "b933b125c632dad670c4322edaf34c1638c5252333135ae2e828c4cd60ffdc02"
+    sha256 = "d52f3fcd83c70f14392c75d5846fc61211e9b373d5b42d86f0002d2d1a71f921"
 
     [resources.system_user]
 
@@ -63,6 +66,7 @@ ram.runtime = "500M"
     [resources.permissions]
 
     [resources.ports]
+    main.default = 9944
 
     [resources.apt]
     packages = "build-essential, clang, git, cmake, protobuf-compiler, libssl-dev, curl, openssl, libudev-dev, curl, llvm"

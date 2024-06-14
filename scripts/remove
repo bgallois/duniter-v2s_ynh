@@ -22,6 +22,8 @@ else
     ynh_remove_systemd_config --service="distance-oracle"
 fi
 
+ynh_remove_nginx_config
+
 # Remove other various files specific to the app... such as :
 
 export $(grep -v '^#' /etc/duniter/env_file | xargs -d '\n')
