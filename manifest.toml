@@ -54,8 +54,8 @@ ram.runtime = "500M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://git.duniter.org/nodes/rust/duniter-v2s/-/archive/fix-200/duniter-v2s-fix-200.tar.gz" #TODO for dev
-    sha256 = "d52f3fcd83c70f14392c75d5846fc61211e9b373d5b42d86f0002d2d1a71f921"
+    url = "https://git.duniter.org/nodes/rust/duniter-v2s/-/archive/eb590e1c1529e21901348dbab75dd7bacc525a7a/duniter-v2s-eb590e1c1529e21901348dbab75dd7bacc525a7a.tar.gz"
+    sha256 = "e2ca402f36a10ae16579cf1c9404a17aeac451c214f0f24376756e33f346c155"
 
     [resources.system_user]
 
