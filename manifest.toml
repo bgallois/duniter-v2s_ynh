@@ -1,6 +1,6 @@
 packaging_format = 2
 
-id = "duniter"
+id = "duniter2"
 name = "duniter-v2s"
 description.en = "Crypto-currency software (based on Substrate framework) to operate Ğ1 libre currency"
 description.fr = "Logiciel de crypto-monnaie (basé sur le framework Substrate) pour utiliser la monnaie libre Ğ1."
@@ -16,15 +16,15 @@ code = "https://git.duniter.org/nodes/rust/duniter-v2s"
 
 [integration]
 yunohost = ">= 11.2"
-architectures = "all"
+architectures = ["amd64",]
 multi_instance = false
 
 ldap = false
 sso = false
 
-disk = "1000M"
-ram.build = "1000M"
-ram.runtime = "500M"
+disk = "500M"
+ram.build = "256M"
+ram.runtime = "256M"
 
 [install]
 
@@ -54,8 +54,13 @@ ram.runtime = "500M"
     [resources.sources]
 
     [resources.sources.main]
-    url = "https://git.duniter.org/nodes/rust/duniter-v2s/-/archive/eb590e1c1529e21901348dbab75dd7bacc525a7a/duniter-v2s-eb590e1c1529e21901348dbab75dd7bacc525a7a.tar.gz"
-    sha256 = "e2ca402f36a10ae16579cf1c9404a17aeac451c214f0f24376756e33f346c155"
+    amd64.url = "https://ipfs.io/ipfs/QmQrEHjXS4uuQuLwhQxtPTigygP6nyU747LCYRs1B4cg5T?filename=duniter_0.8.0-1_amd64.deb.tar.gz"
+    amd64.sha256 = "11360d61baa604fd7a8a5cdad3839785273c69c2705a027ae1d0769071c690a4"
+
+    # TODO add ARM version
+
+    format = "tar.gz"
+    in_subdir = false
 
     [resources.system_user]
 

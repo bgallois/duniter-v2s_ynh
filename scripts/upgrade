@@ -12,111 +12,37 @@ source /usr/share/yunohost/helpers
 #=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
-# STOP SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Stopping and removing systemd services..." --weight=1
+ynh_script_progression --message="Stopping systemd services..." --weight=1
 
 if [ $node_type = "mirror" ]; then
-    ynh_remove_systemd_config --service="duniter-mirror"
+    ynh_systemd_action --service_name="duniter-mirror.service" --action="stop" --line_match="Stopped" --log_path="systemd"
 else
-    ynh_remove_systemd_config --service="duniter-smith"
-    ynh_systemd_action --service_name="distance-oracle.timer" --action="stop" --line_match="Stop" --log_path="systemd"
-    ynh_secure_remove --file="/etc/systemd/system/distance-oracle.timer"
-    ynh_remove_systemd_config --service="distance-oracle"
+    ynh_systemd_action --service_name="duniter-smith.service" --action="stop" --line_match="Stopped" --log_path="systemd"
+    ynh_systemd_action --service_name="distance-oracle.timer" --action="stop" --line_match="Stopped" --log_path="systemd"
 fi
 
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=1
+ynh_script_progression --message="Upgrading $app..." --weight=1
 
-getent group duniter >/dev/null 2>&1 || addgroup --system "duniter"
-getent passwd duniter >/dev/null 2>&1 || adduser --system --disabled-password --ingroup "duniter" "duniter"
-
-# Create duniter home dir
-if [ ! -d "/home/duniter/" ]; then
-    mkdir /home/duniter
-    chown -R duniter:duniter /home/duniter
-    chmod 700 /home/duniter
-fi
-
-#=================================================
-# INSTALL RUST/CARGO
-#=================================================
-ynh_script_progression --message="Installing Rust and Cargo..." --weight=1
-
-# Install rustup with the toolchain needed by Gemserv
-pushd "$install_dir"
-    ynh_exec_warn_less ynh_exec_as "$app" \
-        RUSTUP_HOME="$install_dir/.rustup" \
-        CARGO_HOME="$install_dir/.cargo" \
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-    | ynh_exec_as "$app" sh -s -- -q -y
-popd
-
-#=================================================
-# DOWNLOAD, CHECK AND UNPACK SOURCE
-#=================================================
-ynh_script_progression --message="Upgrading source files..." --weight=1
-
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$install_dir/build"
+ynh_setup_source --dest_dir="$install_dir"
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R "$app:$app" "$install_dir"
+chown -R "duniter:duniter" "$install_dir"
 
-#=================================================
-# SPECIFIC UPGRADE
-#=================================================
-# BUILD APP
-#=================================================
-ynh_script_progression --message="Building app..." --weight=1
-
-# Compile duniter
-pushd "$install_dir/build"
-    ynh_exec_warn_less ynh_exec_as "$app" bash -c "source $install_dir/.cargo/env; cargo build -Zgit=shallow-deps --release -p duniter"
-popd
-
-# Install
-cp -af "$install_dir/build/target/release/duniter" "/usr/bin/duniter2"
-chown root:root "/usr/bin/duniter2"
-chmod 755 "/usr/bin/duniter2"
-mkdir "/etc/duniter/"
-
-ynh_add_nginx_config
-
-# Update config file
-sed -i "s/DUNITER_NODE_NAME.*/DUNITER_NODE_NAME=$node_name/g" "$install_dir/build/resources/debian/env_file"
-sed -i "s/DUNITER_LISTEN_ADDR.*/DUNITER_LISTEN_ADDR=${node_listen_addr//\//\\/}/g" "$install_dir/build/resources/debian/env_file"
-cp -af "$install_dir/build/resources/debian/env_file" "/etc/duniter/env_file"
+dpkg -i ${install_dir}/duniter*.deb
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
 ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
 
-# Create a dedicated systemd config
-if [ $node_type = "mirror" ]; then
-    ynh_add_systemd_config --service="duniter-mirror" --template="$install_dir/build/resources/debian/duniter-mirror.service"
-else
-    ynh_add_systemd_config --service="duniter-smith" --template="$install_dir/build/resources/debian/duniter-smith.service"
-    ynh_add_systemd_config --service="distance-oracle" --template="$install_dir/build/resources/debian/distance-oracle.service"
-    cp "$install_dir/build/resources/debian/distance-oracle.timer" "/etc/systemd/system/"
-fi
-
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
-
-# Remove build files and rustup
-ynh_secure_remove --file="$install_dir/build"
-ynh_secure_remove --file="$install_dir/.cargo"
-ynh_secure_remove --file="$install_dir/.rustup"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression --message="Starting systemd services..." --weight=1
 
 if [ $node_type = "mirror" ]; then
     ynh_systemd_action --service_name="duniter-mirror" --action="start" --line_match="Started" --log_path="systemd"
@@ -124,6 +50,12 @@ else
     ynh_systemd_action --service_name="duniter-smith" --action="start" --line_match="Started" --log_path="systemd"
     ynh_systemd_action --service_name="distance-oracle.timer" --action="start" --line_match="Started" --log_path="systemd"
 fi
+
+#=================================================
+# CLEAN
+#=================================================
+ynh_script_progression --message="Cleaning..." --weight=1
+ynh_secure_remove --file="$install_dir/"
 
 #=================================================
 # END OF SCRIPT

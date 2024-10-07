@@ -13,19 +13,15 @@ ynh_print_info --message="Declaring files to be backed up..."
 # Backup the nginx configuration
 ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
+ynh_backup --src_path="/etc/duniter/"
+
 export $(grep -v '^#' /etc/duniter/env_file | xargs -d '\n')
-ynh_backup --src_path="${BASE_PATH}" --is_big
+ynh_backup --src_path="${BASE_PATH}"
 
-ynh_backup --src_path="/etc/$app/"
-
-
-if [ $node_type = "mirror" ]; then
-    ynh_backup --src_path="/etc/systemd/system/duniter-mirror.service"
-else
-    ynh_backup --src_path="/etc/systemd/system/duniter-smith.service"
-    ynh_backup --src_path="/etc/systemd/system/distance-oracle.service"
-    ynh_backup --src_path="/etc/systemd/system/distance-oracle.timer"
-fi
+ynh_backup --src_path="/usr/lib/systemd/system/duniter-mirror.service"
+ynh_backup --src_path="/usr/lib/systemd/system/duniter-smith.service"
+ynh_backup --src_path="/usr/lib/systemd/system/distance-oracle.service"
+ynh_backup --src_path="/usr/lib/systemd/system/distance-oracle.timer"
 
 ynh_backup --src_path="/var/log/$app/"
 
