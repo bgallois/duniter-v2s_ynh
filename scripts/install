@@ -19,6 +19,7 @@ ynh_setup_source --dest_dir="$install_dir"
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 
+
 #=================================================
 # INSTALLATION
 #=================================================
@@ -27,6 +28,10 @@ ynh_script_progression --message="Installing $app..." --weight=1
 ynh_add_nginx_config
 
 dpkg -i ${install_dir}/duniter*.deb
+
+# Force duniter home permission
+chown -R duniter:duniter /home/duniter
+chmod 700 /home/duniter
 
 # Update config file
 sed -i "s/DUNITER_NODE_NAME.*/DUNITER_NODE_NAME=$node_name/g" "/etc/duniter/env_file"
